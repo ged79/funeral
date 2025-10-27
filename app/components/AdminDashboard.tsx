@@ -1650,8 +1650,9 @@ onClick={async () => {
     <div className="flex bg-gray-100 min-h-screen">
       <div className="w-64 bg-gray-800 text-white p-4 overflow-y-auto">
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-2">영동병원</h2>
-          <p className="text-sm text-gray-400">장례식장 관리시스템</p>
+          <p className="text-xs text-gray-400 mb-2">의료법인 조은의료재단</p>
+          <h2 className="text-2xl font-bold mb-1">영동병원</h2>
+          <h3 className="text-2xl font-bold">장례식장</h3>
         </div>
         <nav className="space-y-2">
           <button onClick={() => setCurrentPage('dashboard')} className={`w-full text-left px-4 py-2 rounded ${currentPage === 'dashboard' ? 'bg-slate-600' : 'hover:bg-gray-700'}`}>현황판</button>
