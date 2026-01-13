@@ -38,3 +38,32 @@ export async function addCondolenceMessage(message: CondolenceMessage) {
   if (error) throw error
   return data
 }
+
+// Delete condolence messages for a specific room (used during room transfer)
+export async function deleteCondolenceMessagesForRoom(
+  funeralHomeId: string,
+  roomNumber: number
+) {
+  const { data, error } = await supabase
+    .from('condolence_messages')
+    .delete()
+    .eq('funeral_home_id', funeralHomeId)
+    .eq('room_number', roomNumber)
+    .select()
+
+  if (error) throw error
+  return data
+}
+
+// Bulk insert condolence messages (used during room transfer)
+export async function bulkInsertCondolenceMessages(messages: CondolenceMessage[]) {
+  if (messages.length === 0) return []
+
+  const { data, error } = await supabase
+    .from('condolence_messages')
+    .insert(messages)
+    .select()
+
+  if (error) throw error
+  return data
+}

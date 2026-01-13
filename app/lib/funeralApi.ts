@@ -84,13 +84,14 @@ export async function getFuneralsByHome(funeralHomeId: string) {
   return data
 }
 
-// 3. 특정 빈소 조회
+// 3. 특정 빈소 조회 (활성 장례만)
 export async function getFuneralByRoom(funeralHomeId: string, roomNumber: number) {
   const { data, error } = await supabase
     .from('funerals')
     .select('*')
     .eq('funeral_home_id', funeralHomeId)
     .eq('room_number', roomNumber)
+    .neq('status', 'completed')  // 완료된 장례 제외
     .maybeSingle()
 
   if (error) throw error
@@ -144,6 +145,64 @@ export async function getCompletedFunerals(funeralHomeId: string) {
 
   if (error) throw error
   return data
+}
+
+// 7-1. 모든 저장된 장례 목록 조회 (진행 중인 장례만)
+export async function getAllSavedFunerals(funeralHomeId: string) {
+  const { data, error } = await supabase
+    .from('funerals')
+    .select('*')
+    .eq('funeral_home_id', funeralHomeId)
+    .neq('status', 'completed')  // 완료된 장례 제외 (진행 중인 장례만)
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  return data
+}
+
+// 7-2. funeral_announcements 테이블에 저장 (퇴실 시)
+export async function saveFuneralAnnouncement(data: FuneralData) {
+  // 데이터 정제: id, created_at, updated_at, floor 제거
+  // - id, created_at, updated_at: DB에서 새로 생성되도록 함
+  // - floor: funeral_announcements 테이블에 없는 컬럼
+  // - status: 'completed'로 변경하여 완료된 장례로 표시
+  const { id, created_at, updated_at, floor, ...cleanData } = data as any
+
+  const insertData = {
+    ...cleanData,
+    status: 'completed'
+  }
+
+  const { data: result, error } = await supabase
+    .from('funeral_announcements')
+    .insert([insertData])
+    .select()
+    .single()
+
+  if (error) throw error
+  return result
+}
+
+// 7-3. funeral_announcements에서 모든 완료된 장례 조회
+export async function getFuneralAnnouncements(funeralHomeId: string) {
+  const { data, error } = await supabase
+    .from('funeral_announcements')
+    .select('*')
+    .eq('funeral_home_id', funeralHomeId)
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  return data
+}
+
+// 7-4. funeral_announcements에서 특정 장례 삭제
+export async function deleteFuneralAnnouncement(id: string) {
+  const { error } = await supabase
+    .from('funeral_announcements')
+    .delete()
+    .eq('id', id)
+
+  if (error) throw error
 }
 
 // 8. Real-time 구독 (빈소 상태 변경 감지)
