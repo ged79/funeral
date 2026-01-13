@@ -19,6 +19,12 @@ interface StatusBoardProps {
   casketTime?: string;
   funeralTime?: string;
   burialLocation?: string;
+  burialType?: string;
+  latestMessage?: {
+    sender_name: string;
+    message: string;
+    created_at?: string;
+  };
 }
 
 export default function StatusBoard({
@@ -34,7 +40,9 @@ export default function StatusBoard({
   familyMembers = [],
   casketTime,
   funeralTime,
-  burialLocation
+  burialLocation,
+  burialType,
+  latestMessage
 }: StatusBoardProps) {
   
   // Format date/time for display
@@ -158,13 +166,13 @@ export default function StatusBoard({
                 </div>
               </div>
             )}
-            {burialLocation && (
+            {(burialType === 'cremation' || burialLocation) && (
               <div className="flex-1">
                 <div className="bg-blue-600 text-white text-center py-3 text-xl font-bold">
                   장 지
                 </div>
                 <div className="text-center py-4 text-xl">
-                  {burialLocation}
+                  {burialType === 'cremation' ? '화장' : burialLocation}
                 </div>
               </div>
             )}
@@ -174,10 +182,16 @@ export default function StatusBoard({
         {/* Footer */}
         <div className="bg-gray-200 px-8 py-3 flex justify-between items-center">
           <div className="text-sm text-gray-600">
-            최근 조의메세지(07시) # 황현진 : 상가 고인의 명복을 빕니다.
+            {latestMessage ? (
+              <>
+                최근 조의메세지({latestMessage.created_at ? new Date(latestMessage.created_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : ''}) # {latestMessage.sender_name} : {latestMessage.message}
+              </>
+            ) : (
+              '조의 메시지가 없습니다.'
+            )}
           </div>
           <div className="text-sm text-gray-600">
-            영동병원장례식장: 충청북도 영동군 영동읍 대학로 106 (설계리, 영동병원), 043-743-4493,
+            영동병원장례식장: 충청북도 영동군 영동읍 대학로 106 (설계리, 영동병원), 043-743-4493
           </div>
         </div>
       </div>
