@@ -2,6 +2,9 @@ import { Metadata } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import ObituaryClientContent from './ObituaryContent';
 
+// 동적 렌더링 강제 (searchParams 사용)
+export const dynamic = 'force-dynamic';
+
 // Supabase client for server-side
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
