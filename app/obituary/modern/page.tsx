@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import ObituaryClientContent from './ObituaryContent';
 
-// 동적 렌더링 강제 (searchParams 사용)
-export const dynamic = 'force-dynamic';
+// ISR 캐싱: 5분간 캐싱 후 재생성 (부고장은 자주 변경되지 않음)
+export const revalidate = 300;
 
 // Supabase client for server-side
 const supabase = createClient(
