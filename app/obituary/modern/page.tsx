@@ -12,9 +12,10 @@ const supabase = createClient(
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: { id?: string };
+  searchParams: Promise<{ id?: string }>;
 }): Promise<Metadata> {
-  const funeralId = searchParams.id;
+  const params = await searchParams;
+  const funeralId = params.id;
 
   // 기본 메타데이터
   const defaultMetadata: Metadata = {
